@@ -42,4 +42,23 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
         onCreate(db);
     }
+
+    public boolean adatRogzites(String email, String felhnev, String jelszo, String teljnev)  {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_EMAIL, email);
+        values.put(COL_FELHNEV, felhnev);
+        values.put(COL_JELSZO, jelszo);
+        values.put(COL_TELJESNEV, teljnev);
+
+        long result = db.insert(FELHASZNALO_TABLE, null, values);
+
+        return result != 1;
+    }
+
+    public Cursor bejelentkezes(String felhnev, String jelszo) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return  db.rawQuery("SELECT felhnev, jelszo FROM " + FELHASZNALO_TABLE + " WHERE felhnev = '" + felhnev + "' and jelszo = '"
+                + jelszo + "'" ,null );
+    }
 }
