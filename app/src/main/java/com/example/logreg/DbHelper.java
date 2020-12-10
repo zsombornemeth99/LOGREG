@@ -53,12 +53,12 @@ public class DbHelper extends SQLiteOpenHelper {
 
         long result = db.insert(FELHASZNALO_TABLE, null, values);
 
-        return result != 1;
+        return result != -1;
     }
 
     public Cursor bejelentkezes(String felhnev, String jelszo) {
         SQLiteDatabase db = this.getReadableDatabase();
-        return  db.rawQuery("SELECT felhnev, jelszo FROM " + FELHASZNALO_TABLE + " WHERE felhnev = '" + felhnev + "' and jelszo = '"
+        return  db.rawQuery("SELECT felhnev, jelszo, teljesnev FROM " + FELHASZNALO_TABLE + " WHERE felhnev = '" + felhnev + "' and jelszo = '"
                 + jelszo + "'" ,null );
     }
 }

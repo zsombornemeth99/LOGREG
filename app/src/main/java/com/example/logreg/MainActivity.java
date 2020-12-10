@@ -2,12 +2,15 @@ package com.example.logreg;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -15,7 +18,8 @@ public class MainActivity extends AppCompatActivity {
     Button btnBejelentkezes, btnRegisztracio;
     EditText etFelhn, etJelszo;
     DbHelper adatbazis;
-
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         init();
+
         onClickListeners();
     }
 
@@ -44,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void bejelentkezes() {
-        String felh = etFelhn.toString().trim();
-        String jelszo = etJelszo.toString().trim();
+        String felh = etFelhn.getText().toString().trim();
+        String jelszo = etJelszo.getText().toString().trim();
         if (felh.isEmpty()) {
             Toast.makeText(this, "A felhasználó megadása kötelező", Toast.LENGTH_SHORT).show();
             return;
@@ -55,9 +60,16 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         Cursor adatok = adatbazis.bejelentkezes(felh, jelszo);
+        StringBuilder sb = new StringBuilder();
+        while (adatok.moveToNext()) {
+            sb.append(adatok.getString(2)).append(" ");
+        }
+        String nev = sb.toString();
+        editor.putString("neved", nev);
+        editor.commit();
 
         if (adatok == null) {
-            Toast.makeText(this, "Sikertelen bejelentkezes", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Adatbázis hiba", Toast.LENGTH_SHORT).show();
             return;
         }
         if (adatok.getCount() == 0) {
@@ -65,8 +77,8 @@ public class MainActivity extends AppCompatActivity {
         }
         else if (adatok.getCount() == 1) {
             Toast.makeText(this, "Sikeres bejelentkezes", Toast.LENGTH_SHORT).show();
-            Intent belep = new Intent(MainActivity.this, LoggedInActivity.class);
-            startActivity(belep);
+            Intent masikActivityre = new Intent(MainActivity.this, LoggedInActivity.class);
+            startActivity(masikActivityre);
             finish();
         }
         else {
@@ -80,5 +92,7 @@ public class MainActivity extends AppCompatActivity {
         etFelhn = findViewById(R.id.et_felhMain);
         etJelszo = findViewById(R.id.et_jelszoMain);
         adatbazis = new DbHelper(MainActivity.this);
+        sharedPref = getSharedPreferences("adatok", Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
     }
 }
