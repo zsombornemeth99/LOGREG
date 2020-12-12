@@ -12,7 +12,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final int DB_Version = 1;
     public static final String DB_Name = "felhasznalo.db";
 
-    public static final String FELHASZNALO_TABLE = "palinka";
+    public static final String FELHASZNALO_TABLE = "felhasznalo";
 
     public static final String COL_ID = "id";
     public static final String COL_EMAIL = "email";
